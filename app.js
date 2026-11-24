@@ -1,5 +1,7 @@
 const projects=[
 ["meeting-action-agent","Агент постановки задач","AI-агент постановки задач по встречам и письмам","AI agent for meeting and email action items","Поручение из письма или транскрипции становится задачей с исполнителем, постановщиком и контекстом.","Turn an instruction from email or a meeting transcript into a task with an assignee, a requester and context.",["AI Agent","Email","Meetings","Task Management"],"Action Item Agent"],
+["leave-preparation-agent","Агент подготовки к отпуску","Агент подготовки к отпуску","Leave preparation agent","За неделю до отпуска проверяет документы и готовит уведомления для почты и чатов.","Checks documents and prepares email and chat notices one week before leave.",["AI Agent","Documents","Email","Chat"],"Leave Preparation Agent"],
+["community-news-agent","Новостной агент","Новостной агент для сообществ","Community news agent","Следит за новостями сообществ, ранжирует публикации и присылает подборку в личный чат.","Monitors community news, ranks posts and delivers a selection in a direct chat.",["AI Agent","Ranking","Personalization","Chat"],"Community News Agent"],
 ['candy-ledger','Gems Ledger','Геймификация профессионального обучения','Professional training gamification','Правила начисления токенов, прогресс аккредитации и магазин наград.','Token award rules, accreditation progress and a rewards shop.',['Gamification','Business rules','Prototype']],
 ["crm-booking","CRM & Booking","CRM и система бронирования","CRM and booking integration","Как согласовать работу с обращениями и заявками в двух системах.","Aligning enquiry and booking workflows across two systems.",["CRM","Workflows","Integration"]],
 ["agent-insurance","Agent Insurance","Страхование для турагентов","Insurance workflow for travel agents","От запроса счёта до подтверждения оплаты и оформления полиса.","From invoice request to payment confirmation and policy issuance.",["B2B","Payments","Workflows"]],
@@ -79,6 +81,46 @@ function renderCandy() {
 }
 
 const workCases = {
+  "leave-preparation-agent": [
+  [
+    "Задача",
+    "Problem",
+    "Подготовка к отпуску включает проверку документов и уведомление людей, которые могут обратиться к сотруднику в его отсутствие.",
+    "Preparing for leave includes checking documents and informing people who may contact the employee during their absence."
+  ],
+  [
+    "Как работает агент",
+    "How the agent works",
+    "За семь дней до начала отпуска агент запускает подготовку. Он проверяет документы, связанные с отпуском, и готовит официальные сообщения об отсутствии для почты и рабочих чатов.",
+    "Seven days before leave begins, the agent starts preparation. It reviews leave-related documents and drafts formal out-of-office notices for email and work chats."
+  ],
+  [
+    "Что получает сотрудник",
+    "Employee output",
+    "Результат проверки документов и готовые тексты уведомлений для двух каналов.",
+    "The result of the document check and ready-to-use notices for both channels."
+  ]
+],
+  "community-news-agent": [
+  [
+    "Задача",
+    "Problem",
+    "Когда новости публикуются в нескольких сообществах, сотруднику приходится просматривать разные ленты, чтобы найти то, что важно именно ему.",
+    "When news is spread across communities, employees have to scan multiple feeds to find what matters to them."
+  ],
+  [
+    "Как работает агент",
+    "How the agent works",
+    "Агент отслеживает публикации сообществ и ранжирует их по двум критериям: насколько новость интересна конкретному сотруднику и насколько она востребована. Так общая популярность учитывается вместе с персональной релевантностью.",
+    "The agent monitors community posts and ranks them using two criteria: relevance to the individual employee and how much interest the news attracts. It considers overall demand alongside personal relevance."
+  ],
+  [
+    "Что получает сотрудник",
+    "Employee output",
+    "Подборку новостей с наивысшим рейтингом в личном чате.",
+    "A selection of the highest-ranked stories in a direct chat."
+  ]
+],
   "meeting-action-agent": [
   [
     "Задача",
