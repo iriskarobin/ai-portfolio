@@ -19,8 +19,8 @@ const candySections = [
   [
     "Бизнес-запрос",
     "Business request",
-    "Дать администратору возможность создать один курс для нескольких ролей и задать правила начисления токенов. Участник должен видеть, сколько получит за курс, сколько осталось до цели и какая часть начисления доступна для обмена.",
-    "Let administrators create one course for multiple roles and configure its token awards. Learners should see what a course earns, how much progress remains and what portion can be redeemed."
+    "«Ввести какую-нибудь геймификацию в курсы, чтобы повысить вовлеченность». На старте бизнес обозначил цель. Какую механику использовать и как связать её с обучением и аккредитацией, предстояло определить. Я предложила систему токенов, которая показывает участнику, за что он получил начисление, к какой роли оно относится и сколько осталось до аккредитации.",
+    "“Introduce some kind of gamification into courses to increase engagement.” The business set the objective. The mechanics and their connection to training and accreditation were open design questions. I proposed a token system that shows learners what each award was for, which role it applies to and how much progress remains toward accreditation."
   ],
   [
     "Идея решения",
