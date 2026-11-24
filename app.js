@@ -102,10 +102,10 @@ const workCases = {
     "I designed the intent recognition flow and dialogue tree. For each intent, I mapped question-and-answer branches and the transitions between them."
   ],
   [
-    "Условный пример ветвления",
-    "Illustrative dialogue branch",
-    "«Как оформить отпуск?» ведёт к инструкции по подаче заявки, а «Где моя заявка на отпуск?» — к сценарию проверки статуса. Если пользователь говорит только «Вопрос по отпуску», можно сначала уточнить, хочет он подать заявку или узнать статус уже поданной.",
-    "“How do I request leave?” leads to the submission instructions, while “Where is my leave request?” leads to the status-check path. If the user only says “I have a question about leave,” the assistant can first ask whether they want to submit a request or check an existing one."
+    "Сценарий перехода между навыками",
+    "Handoff between assistant skills",
+    "Когда сотрудник спрашивал о статусе заявления на отпуск, распознаватель определял намерение и предлагал открыть другой навык виртуального ассистента — «Мой HR-профиль». В нём сотрудник мог посмотреть, на каком этапе заявление, кто уже согласовал его и чьё решение ещё ожидается. Связаться с согласующим можно было прямо из навыка.",
+    "When an employee asked about a leave request, the recognizer identified the intent and offered to open another virtual assistant skill, My HR Profile. The employee could see the request’s progress, who had approved it and whose decision was still pending, and contact an approver directly from the skill."
   ]
 ],
   "leave-preparation-agent": [
@@ -237,39 +237,26 @@ const workCases = {
 };
 
 
+
 function renderIntentFlow() {
-  const branches = [
-    [
-      '«Как оформить отпуск?»', '“How do I request leave?”',
-      'Оформить отпуск', 'Request leave',
-      'Показать порядок подачи заявки', 'Show how to submit a request'
-    ],
-    [
-      '«Где моя заявка на отпуск?»', '“Where is my leave request?”',
-      'Узнать статус', 'Check status',
-      'Предложить проверить статус заявки', 'Offer to check the request status'
-    ],
-    [
-      '«Вопрос по отпуску»', '“I have a question about leave”',
-      'Намерение неясно', 'Unclear intent',
-      'Уточнить, нужно оформить отпуск или проверить статус', 'Ask whether to submit a request or check its status'
-    ]
+  const actions = [
+    ['Проверить статус', 'Check status', 'Узнать, на каком этапе заявление', 'See the current stage of the request'],
+    ['Посмотреть согласование', 'Review approvals', 'Увидеть, кто согласовал и чей ответ ожидается', 'See approvals and pending decisions'],
+    ['Связаться с согласующим', 'Contact an approver', 'Написать напрямую из навыка', 'Contact them directly from the skill']
   ];
   return `<figure class="intent-flow">
-    <figcaption><h3>${tr('Как выбирается ветка диалога', 'How the dialogue branch is selected')}</h3>
-      <p>${tr('Условный пример на трёх фразах из одного сценария.', 'An illustrative example with three phrases from one scenario.')}</p>
-    </figcaption>
+    <figcaption><h3>${tr('От вопроса об отпуске к HR-профилю', 'From a leave question to the HR profile')}</h3></figcaption>
     <div class="intent-flow-root">
-      <strong>${tr('Сообщение пользователя', 'User message')}</strong>
+      <strong>${tr('«Что с моим заявлением на отпуск?»', '“What’s the status of my leave request?”')}</strong>
       <span aria-hidden="true">↓</span>
-      <strong>${tr('Распознавание намерения', 'Intent recognition')}</strong>
+      <span>${tr('Интент · узнать статус заявления', 'Intent · check leave request status')}</span>
+      <span aria-hidden="true">↓</span>
+      <strong>${tr('Предложить открыть навык «Мой HR-профиль»', 'Offer to open the My HR Profile skill')}</strong>
     </div>
-    <ul class="intent-branches">${branches.map(([phraseRu, phraseEn, intentRu, intentEn, actionRu, actionEn]) => `
+    <ul class="intent-branches">${actions.map(([titleRu, titleEn, textRu, textEn]) => `
       <li>
-        <span class="intent-example">${tr(phraseRu, phraseEn)}</span>
-        <strong>${tr(intentRu, intentEn)}</strong>
-        <span aria-hidden="true">↓</span>
-        <span>${tr(actionRu, actionEn)}</span>
+        <strong>${tr(titleRu, titleEn)}</strong>
+        <span>${tr(textRu, textEn)}</span>
       </li>`).join('')}</ul>
   </figure>`;
 }
