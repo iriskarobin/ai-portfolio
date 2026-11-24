@@ -279,10 +279,382 @@ function groupFromAddress() {
 }
 
 let projectGroup = groupFromAddress();
+
+const projectWorkflows = {
+  "meeting-action-agent": {
+    "steps": [
+      [
+        "Получить письмо или транскрипцию",
+        "Read an email or transcript"
+      ],
+      [
+        "Выделить поручение и контекст",
+        "Extract the instruction and context"
+      ],
+      [
+        "Определить исполнителя и постановщика",
+        "Identify assignee and requester"
+      ]
+    ],
+    "decision": [
+      "Поручение и участники определены?",
+      "Are the instruction and participants identified?"
+    ],
+    "branches": [
+      [
+        "Да → Создать задачу с контекстом",
+        "Yes → Create a task with context"
+      ],
+      [
+        "Нет → Оставить на проверку",
+        "No → Leave for review"
+      ]
+    ]
+  },
+  "leave-preparation-agent": {
+    "steps": [
+      [
+        "За семь дней до отпуска запустить подготовку",
+        "Start seven days before leave"
+      ],
+      [
+        "Проверить документы",
+        "Review documents"
+      ]
+    ],
+    "decision": [
+      "Документы в порядке?",
+      "Are the documents ready?"
+    ],
+    "branches": [
+      [
+        "Да → Подготовить уведомления для почты и чатов",
+        "Yes → Draft email and chat notices"
+      ],
+      [
+        "Нет → Показать, что нужно проверить",
+        "No → Flag what needs attention"
+      ]
+    ]
+  },
+  "community-news-agent": {
+    "steps": [
+      [
+        "Собрать публикации сообществ",
+        "Collect community posts"
+      ],
+      [
+        "Оценить персональную релевантность",
+        "Score personal relevance"
+      ],
+      [
+        "Учесть востребованность и ранжировать",
+        "Factor in demand and rank stories"
+      ],
+      [
+        "Отправить подборку в личный чат",
+        "Send the top stories in a direct chat"
+      ]
+    ]
+  },
+  "intent-recognizer": {
+    "steps": [
+      [
+        "Получить фразу пользователя",
+        "Receive the user’s phrase"
+      ],
+      [
+        "Распознать интент об отпуске",
+        "Recognize the leave intent"
+      ]
+    ],
+    "decision": [
+      "Выбрать продолжение диалога",
+      "Choose the next dialogue path"
+    ],
+    "branches": [
+      [
+        "Один из переходов → Вызвать HR-навык: статус, согласования, связь с согласующим",
+        "One possible transition → Invoke the HR skill: status, approvals and contact"
+      ],
+      [
+        "Другие варианты → Продолжить по соответствующей ветке диалога",
+        "Other paths → Continue along the applicable dialogue branch"
+      ]
+    ]
+  },
+  "candy-ledger": {
+    "steps": [
+      [
+        "Выбрать курс, роль и условия прохождения",
+        "Select course, role and completion conditions"
+      ],
+      [
+        "Рассчитать начисление токенов",
+        "Calculate the token award"
+      ]
+    ],
+    "decision": [
+      "Начисление превышает остаток до порога?",
+      "Does the award exceed the remaining accreditation gap?"
+    ],
+    "branches": [
+      [
+        "Да → Закрыть остаток, излишек отправить в магазин",
+        "Yes → Fill the gap and move excess tokens to the shop"
+      ],
+      [
+        "Нет → Засчитать начисление в прогресс по роли",
+        "No → Apply the award to progress for that role"
+      ]
+    ]
+  },
+  "crm-booking": {
+    "steps": [
+      [
+        "Менеджер получает обращение в CRM",
+        "A manager receives an enquiry in the CRM"
+      ],
+      [
+        "Проверить, связано ли обращение с заявкой",
+        "Check whether the enquiry relates to an existing booking"
+      ]
+    ],
+    "decision": [
+      "Какой сценарий нужен?",
+      "Which workflow applies?"
+    ],
+    "branches": [
+      [
+        "Вопрос по заявке → Передать в сопровождение",
+        "Booking enquiry → Route to support"
+      ],
+      [
+        "Новое обращение → Обработать в воронке лидов",
+        "New enquiry → Process in the lead pipeline"
+      ]
+    ]
+  },
+  "agent-insurance": {
+    "steps": [
+      [
+        "Агент запрашивает счёт",
+        "The agent requests an invoice"
+      ],
+      [
+        "Менеджер выставляет счёт",
+        "The manager issues the invoice"
+      ],
+      [
+        "Бухгалтерия сверяет оплату",
+        "Accounting reconciles payment"
+      ]
+    ],
+    "decision": [
+      "Оплата подтверждена и условия счёта действуют?",
+      "Is payment confirmed and are invoice terms still valid?"
+    ],
+    "branches": [
+      [
+        "Да → Оформить полис",
+        "Yes → Issue the policy"
+      ],
+      [
+        "Нет → Дождаться подтверждения или проверить условия счёта",
+        "No → Wait for confirmation or review the invoice terms"
+      ]
+    ]
+  },
+  "agent-currency-payments": {
+    "steps": [
+      [
+        "Получить платежи по заявке",
+        "Retrieve payments for a booking"
+      ],
+      [
+        "Проверить исходную сумму и валюту каждого платежа",
+        "Check the original amount and currency for each payment"
+      ]
+    ],
+    "decision": [
+      "Исходные данные доступны?",
+      "Are the original payment details available?"
+    ],
+    "branches": [
+      [
+        "Да → Показать платежи и итог по каждой валюте",
+        "Yes → Display payments and totals by currency"
+      ],
+      [
+        "Нет → Показать доступные данные и обозначить пропуск",
+        "No → Show available data and flag the gap"
+      ]
+    ]
+  },
+  "ai-business-request-processor": {
+    "steps": [
+      [
+        "Получить текст запроса",
+        "Receive the request text"
+      ],
+      [
+        "Выделить факты и классифицировать запрос",
+        "Extract facts and classify the request"
+      ],
+      [
+        "Сформировать вопросы и черновик задачи",
+        "Draft a task and clarification questions"
+      ],
+      [
+        "Передать на проверку аналитику",
+        "Send to an analyst for review"
+      ]
+    ]
+  },
+  "ai-knowledge-assistant": {
+    "steps": [
+      [
+        "Получить вопрос",
+        "Receive a question"
+      ],
+      [
+        "Найти подходящие фрагменты документов",
+        "Retrieve relevant document passages"
+      ]
+    ],
+    "decision": [
+      "Достаточно источников для ответа?",
+      "Is there enough evidence to answer?"
+    ],
+    "branches": [
+      [
+        "Да → Сформировать ответ со ссылками",
+        "Yes → Answer with citations"
+      ],
+      [
+        "Нет → Сообщить, каких сведений не хватает",
+        "No → Report the evidence gap"
+      ]
+    ]
+  },
+  "ai-ticket-classifier": {
+    "steps": [
+      [
+        "Получить обращение",
+        "Receive a ticket"
+      ],
+      [
+        "Определить тему и маршрут",
+        "Identify the category and routing destination"
+      ]
+    ],
+    "decision": [
+      "Маршрут однозначен?",
+      "Is the routing destination clear?"
+    ],
+    "branches": [
+      [
+        "Да → Направить в нужную очередь",
+        "Yes → Route to the appropriate queue"
+      ],
+      [
+        "Нет → Передать на ручную классификацию",
+        "No → Send for manual classification"
+      ]
+    ]
+  },
+  "ai-document-processing": {
+    "steps": [
+      [
+        "Получить документ",
+        "Receive a document"
+      ],
+      [
+        "Извлечь поля",
+        "Extract fields"
+      ],
+      [
+        "Проверить форматы и обязательные значения",
+        "Validate formats and required fields"
+      ]
+    ],
+    "decision": [
+      "Проверка пройдена?",
+      "Did validation pass?"
+    ],
+    "branches": [
+      [
+        "Да → Передать структурированные данные",
+        "Yes → Output structured data"
+      ],
+      [
+        "Нет → Отметить поля для проверки",
+        "No → Flag fields for review"
+      ]
+    ]
+  },
+  "llm-evaluation-monitoring": {
+    "steps": [
+      [
+        "Запустить набор тестовых запросов",
+        "Run an evaluation dataset"
+      ],
+      [
+        "Измерить качество, задержку и стоимость",
+        "Measure quality, latency and cost"
+      ]
+    ],
+    "decision": [
+      "Показатели в заданных пределах?",
+      "Are metrics within thresholds?"
+    ],
+    "branches": [
+      [
+        "Да → Зафиксировать результаты сравнения",
+        "Yes → Record comparison results"
+      ],
+      [
+        "Нет → Разобрать отклонения по тестовым примерам",
+        "No → Investigate deviations in test examples"
+      ]
+    ]
+  }
+};
+
+function renderProjectWorkflow(id) {
+  const workflow = projectWorkflows[id];
+  const label = ([ru, en]) => tr(ru, en);
+  const { steps, decision, branches } = workflow;
+  const yaml = [
+    'workflow: ' + id,
+    'language: ' + lang,
+    'steps:',
+    ...steps.map(step => '  - ' + JSON.stringify(label(step))),
+    ...(decision ? [
+      'decision: ' + JSON.stringify(label(decision)),
+      'branches:',
+      ...branches.map(branch => '  - ' + JSON.stringify(label(branch)))
+    ] : [])
+  ].join('\n') + '\n';
+  const download = `<a class="workflow-download" download="${id}-${lang}.yml" href="data:application/yaml;charset=utf-8,${encodeURIComponent(yaml)}">${tr('Скачать YAML', 'Download YAML')}</a>`;
+  if (id === 'intent-recognizer') return download;
+
+  return `<figure class="intent-flow project-workflow">
+    <figcaption><h3>${tr('Схема процесса', 'Process flow')}</h3></figcaption>
+    <ol class="workflow-steps">${steps.map(step => `<li>${escapeHTML(label(step))}</li>`).join('')}</ol>
+    ${decision ? `<div class="intent-flow-root"><strong>${escapeHTML(label(decision))}</strong></div>
+      <ul class="intent-branches">${branches.map(branch => `<li>${escapeHTML(label(branch))}</li>`).join('')}</ul>` : ''}
+    ${download}
+  </figure>`;
+}
+
 function render(){document.documentElement.lang=lang;document.getElementById('lang').textContent=lang==='ru'?'EN':'RU';document.querySelectorAll('[data-ru]').forEach(e=>e.innerHTML=e.dataset[lang]);document.querySelectorAll('[data-project-group]').forEach(link => {
   if (link.dataset.projectGroup === projectGroup) link.setAttribute('aria-current', 'true');
   else link.removeAttribute('aria-current');
-});document.getElementById('cards').innerHTML=projectGroups[projectGroup].map((p,i)=>`<button class="card ${i===selected?'active':''}" data-index="${i}"><h3>${tr(p[1],p[7]??p[1])}</h3><p>${tr(p[4],p[5])}</p><div class="tags">${p[6].map(x=>`<span>${x}</span>`).join('')}</div></button>`).join('');document.querySelectorAll('.card').forEach(b=>b.onclick=()=>{selected=Number(b.dataset.index);render();document.getElementById('detail').scrollIntoView({behavior:'smooth'});});const p=projectGroups[projectGroup][selected];if(p[0]==='candy-ledger'){document.getElementById('case').innerHTML=renderCandy();return;}if(workCases[p[0]]){document.getElementById('case').innerHTML=renderWorkCase(p,workCases[p[0]]);return;}document.getElementById('case').innerHTML=`<h2>${tr(p[2],p[3])}</h2><p>${tr(p[4],p[5])}</p>${p[0]==='ai-business-request-processor'?`<div class="demo"><p>${tr('Пример первичного разбора запроса','Example of business request intake')}</p><textarea id="request" placeholder="${tr('Агенты не видят оплаченные суммы в валюте. Нужно исправить.','Agents cannot see foreign-currency payments. Please fix.')}"></textarea><button id="analyze">${tr('Разобрать запрос','Analyze request')}</button><pre id="result" aria-live="polite"></pre></div>`:''}`;if(p[0]==='ai-business-request-processor')document.getElementById('analyze').onclick=analyze;}
+});document.getElementById('cards').innerHTML=projectGroups[projectGroup].map((p,i)=>`<button class="card ${i===selected?'active':''}" data-index="${i}"><h3>${tr(p[1],p[7]??p[1])}</h3><p>${tr(p[4],p[5])}</p><div class="tags">${p[6].map(x=>`<span>${x}</span>`).join('')}</div></button>`).join('');document.querySelectorAll('.card').forEach(b=>b.onclick=()=>{selected=Number(b.dataset.index);render();document.getElementById('detail').scrollIntoView({behavior:'smooth'});});const p=projectGroups[projectGroup][selected];const content = p[0] === 'candy-ledger' ? renderCandy()
+  : workCases[p[0]] ? renderWorkCase(p, workCases[p[0]])
+  : `<h2>${tr(p[2],p[3])}</h2><p>${tr(p[4],p[5])}</p>${p[0]==='ai-business-request-processor'?`<div class="demo"><p>${tr('Пример первичного разбора запроса','Example of business request intake')}</p><textarea id="request" placeholder="${tr('Агенты не видят оплаченные суммы в валюте. Нужно исправить.','Agents cannot see foreign-currency payments. Please fix.')}"></textarea><button id="analyze">${tr('Разобрать запрос','Analyze request')}</button><pre id="result" aria-live="polite"></pre></div>`:''}`;
+document.getElementById('case').innerHTML=content+renderProjectWorkflow(p[0]);if(p[0]==='ai-business-request-processor')document.getElementById('analyze').onclick=analyze;}
 function analyze(){const input=document.getElementById('request').value.trim();const currency=/валют|курс|currency|exchange/i.test(input);const bug=/ошиб|сломал|bug|broken/i.test(input);const result={mode:'rule_based_demo',classification:bug?tr('Ошибка','Bug'):tr('Запрос на изменение','Change request'),input,clarification_questions:currency?[tr('В какой валюте хранится сумма?','What currency is the source of truth?'),tr('Нужна ли история частичных оплат?','Should partial payments be shown?'),tr('Как учитывать возвраты?','How should refunds be handled?')]:[tr('Какой ожидается результат?','What is the expected outcome?'),tr('Какие пользователи затронуты?','Which users are affected?'),tr('Каковы критерии приёмки?','What are the acceptance criteria?')],human_review_required:true};document.getElementById('result').textContent=JSON.stringify(result,null,2);}
 document.getElementById('lang').onclick=()=>{lang=lang==='ru'?'en':'ru';localStorage.setItem('portfolio-lang',lang);render();};
 window.addEventListener('hashchange', () => {
