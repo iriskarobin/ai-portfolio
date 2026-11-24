@@ -153,3 +153,59 @@ footer { border-top: 1px solid var(--line); padding-block: 25px 35px; color: var
   border-color: var(--accent);
   color: #fff;
 }
+
+.intent-flow {
+  margin: 34px 0 0;
+  padding: clamp(14px, 3vw, 24px);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--tint);
+}
+.intent-flow h3 { margin: 0 0 8px; }
+.intent-flow p { margin: 0 0 20px; }
+.intent-flow-root, .intent-branches > li {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 6px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.intent-flow-root { width: fit-content; margin: 0 auto; }
+#case .intent-branches {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.intent-branches::before {
+  content: '';
+  position: absolute;
+  top: -14px;
+  inset-inline: calc((100% - 24px) / 6);
+  border-top: 1px solid var(--accent);
+}
+.intent-flow-root { position: relative; }
+.intent-flow-root::after, .intent-branches > li::before {
+  content: '';
+  position: absolute;
+  height: 14px;
+  border-left: 1px solid var(--accent);
+}
+.intent-flow-root::after { top: 100%; left: 50%; }
+.intent-branches > li { position: relative; }
+.intent-branches > li::before { bottom: 100%; left: 50%; }
+.intent-branches strong, .intent-flow-root strong { color: var(--accent); }
+.intent-example { font-size: 14px; }
+@media (max-width: 720px) {
+  #case .intent-branches { grid-template-columns: 1fr; }
+  .intent-branches::before, .intent-branches > li::before { display: none; }
+  .intent-flow-root::after { height: 28px; }
+}
