@@ -90,6 +90,12 @@ const workCases = {
     "Users phrase the same request in different ways. The system needs to identify what the user wants and choose the appropriate dialogue path."
   ],
   [
+    "Масштаб",
+    "Scope",
+    "В проекте было множество интентов и более 5 000 пользовательских фраз.",
+    "The project covered numerous intents and more than 5,000 user utterances."
+  ],
+  [
     "Моя работа",
     "My contribution",
     "Я проработала распознавание пользовательских намерений и дерево диалога. Для каждого намерения описала ветки «вопрос — ответ» и переходы между ними.",
@@ -230,11 +236,49 @@ const workCases = {
   ]
 };
 
+
+function renderIntentFlow() {
+  const branches = [
+    [
+      '«Как оформить отпуск?»', '“How do I request leave?”',
+      'Оформить отпуск', 'Request leave',
+      'Показать порядок подачи заявки', 'Show how to submit a request'
+    ],
+    [
+      '«Где моя заявка на отпуск?»', '“Where is my leave request?”',
+      'Узнать статус', 'Check status',
+      'Предложить проверить статус заявки', 'Offer to check the request status'
+    ],
+    [
+      '«Вопрос по отпуску»', '“I have a question about leave”',
+      'Намерение неясно', 'Unclear intent',
+      'Уточнить, нужно оформить отпуск или проверить статус', 'Ask whether to submit a request or check its status'
+    ]
+  ];
+  return `<figure class="intent-flow">
+    <figcaption><h3>${tr('Как выбирается ветка диалога', 'How the dialogue branch is selected')}</h3>
+      <p>${tr('Условный пример на трёх фразах из одного сценария.', 'An illustrative example with three phrases from one scenario.')}</p>
+    </figcaption>
+    <div class="intent-flow-root">
+      <strong>${tr('Сообщение пользователя', 'User message')}</strong>
+      <span aria-hidden="true">↓</span>
+      <strong>${tr('Распознавание намерения', 'Intent recognition')}</strong>
+    </div>
+    <ul class="intent-branches">${branches.map(([phraseRu, phraseEn, intentRu, intentEn, actionRu, actionEn]) => `
+      <li>
+        <span class="intent-example">${tr(phraseRu, phraseEn)}</span>
+        <strong>${tr(intentRu, intentEn)}</strong>
+        <span aria-hidden="true">↓</span>
+        <span>${tr(actionRu, actionEn)}</span>
+      </li>`).join('')}</ul>
+  </figure>`;
+}
+
 function renderWorkCase(project, sections) {
   const body = sections.map(([ruTitle, enTitle, ruText, enText]) =>
     `<section><h3>${tr(ruTitle, enTitle)}</h3><p>${tr(ruText, enText)}</p></section>`
   ).join('');
-  return `<h2>${tr(project[2], project[3])}</h2><p class="sub">${tr(project[4], project[5])}</p><div class="candy-story">${body}</div>`;
+  return `<h2>${tr(project[2], project[3])}</h2><p class="sub">${tr(project[4], project[5])}</p><div class="candy-story">${body}</div>${project[0] === 'intent-recognizer' ? renderIntentFlow() : ''}`;
 }
 
 const analysisProjects = new Set(['candy-ledger', 'crm-booking', 'agent-insurance', 'agent-currency-payments']);
