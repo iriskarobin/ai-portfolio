@@ -2,6 +2,7 @@ const projects=[
 ["meeting-action-agent","Агент постановки задач","AI-агент постановки задач по встречам и письмам","AI agent for meeting and email action items","Поручение из письма или транскрипции становится задачей с исполнителем, постановщиком и контекстом.","Turn an instruction from email or a meeting transcript into a task with an assignee, a requester and context.",["AI Agent","Email","Meetings","Task Management"],"Action Item Agent"],
 ["leave-preparation-agent","Агент подготовки к отпуску","Агент подготовки к отпуску","Leave preparation agent","За неделю до отпуска проверяет документы и готовит уведомления для почты и чатов.","Checks documents and prepares email and chat notices one week before leave.",["AI Agent","Documents","Email","Chat"],"Leave Preparation Agent"],
 ["community-news-agent","Новостной агент","Новостной агент для сообществ","Community news agent","Следит за новостями сообществ, ранжирует публикации и присылает подборку в личный чат.","Monitors community news, ranks posts and delivers a selection in a direct chat.",["AI Agent","Ranking","Personalization","Chat"],"Community News Agent"],
+["intent-recognizer","Распознавание намерений","Распознавание намерений и сценарии диалога","Intent recognition and dialogue design","От формулировки пользователя к подходящей ветке вопросов и ответов.","Routing a user's request to the appropriate question-and-answer branch.",["Intent Recognition","Dialogue Design"],"Intent Recognizer"],
 ['candy-ledger','Gems Ledger','Геймификация профессионального обучения','Professional training gamification','Правила начисления токенов, прогресс аккредитации и магазин наград.','Token award rules, accreditation progress and a rewards shop.',['Gamification','Business rules','Prototype']],
 ["crm-booking","CRM & Booking","CRM и система бронирования","CRM and booking integration","Как согласовать работу с обращениями и заявками в двух системах.","Aligning enquiry and booking workflows across two systems.",["CRM","Workflows","Integration"]],
 ["agent-insurance","Agent Insurance","Страхование для турагентов","Insurance workflow for travel agents","От запроса счёта до подтверждения оплаты и оформления полиса.","From invoice request to payment confirmation and policy issuance.",["B2B","Payments","Workflows"]],
@@ -81,6 +82,26 @@ function renderCandy() {
 }
 
 const workCases = {
+"intent-recognizer": [
+  [
+    "Задача",
+    "Problem",
+    "Пользователи формулируют одну и ту же просьбу по-разному. Системе нужно определить, чего хочет человек, и выбрать подходящий сценарий диалога.",
+    "Users phrase the same request in different ways. The system needs to identify what the user wants and choose the appropriate dialogue path."
+  ],
+  [
+    "Моя работа",
+    "My contribution",
+    "Я проработала распознавание пользовательских намерений и дерево диалога. Для каждого намерения описала ветки «вопрос — ответ» и переходы между ними.",
+    "I designed the intent recognition flow and dialogue tree. For each intent, I mapped question-and-answer branches and the transitions between them."
+  ],
+  [
+    "Условный пример ветвления",
+    "Illustrative dialogue branch",
+    "«Как оформить отпуск?» ведёт к инструкции по подаче заявки, а «Где моя заявка на отпуск?» — к сценарию проверки статуса. Если пользователь говорит только «Вопрос по отпуску», можно сначала уточнить, хочет он подать заявку или узнать статус уже поданной.",
+    "“How do I request leave?” leads to the submission instructions, while “Where is my leave request?” leads to the status-check path. If the user only says “I have a question about leave,” the assistant can first ask whether they want to submit a request or check an existing one."
+  ]
+],
   "leave-preparation-agent": [
   [
     "Задача",
