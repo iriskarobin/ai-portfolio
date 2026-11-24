@@ -1,12 +1,12 @@
 :root {
   color-scheme: light;
-  --paper: #faf9f5;
-  --surface: #fff;
-  --ink: #222b26;
-  --muted: #526059;
-  --accent: #245741;
-  --tint: #edf5ee;
-  --line: #dbe3dc;
+  --paper: #f7efdf;
+  --surface: #fff9ee;
+  --ink: #262019;
+  --muted: #55483b;
+  --accent: #762d37;
+  --tint: #efe3d1;
+  --line: #b9a58c;
 }
 
 * { box-sizing: border-box; }
@@ -60,7 +60,7 @@ h1 em { color: var(--accent); font-style: normal; }
   font-weight: 700;
 }
 .cta { display: inline-block; padding: 13px 21px; }
-.cta:hover, .demo button:hover { background: #194432; }
+.cta:hover, .demo button:hover { background: #501d23; }
 section:not(.hero) { padding-block: clamp(42px, 6vw, 84px); }
 #projects { border-top: 1px solid var(--line); }
 h2 { font-size: clamp(29px, 4vw, 48px); margin: 12px 0 16px; }
@@ -102,7 +102,7 @@ h2 { font-size: clamp(29px, 4vw, 48px); margin: 12px 0 16px; }
   width: 100%;
   min-height: 110px;
   background: var(--surface);
-  border: 1px solid #a3b4a8;
+  border: 1px solid #a28b71;
   border-radius: 8px;
   color: var(--ink);
   padding: 12px;
@@ -262,3 +262,85 @@ footer { border-top: 1px solid var(--line); padding-block: 25px 35px; color: var
 .card h3 { margin-top: 0; }
 #case { box-shadow: 0 8px 26px #1836290a; }
 @media (max-width: 760px) { .hero { grid-template-columns: 1fr; } }
+
+body {
+  background-image: radial-gradient(ellipse at top, #fff9ed 0, transparent 72%);
+  font-family: Georgia, "Times New Roman", serif;
+}
+header {
+  border-top: 4px double var(--ink);
+  border-bottom: 4px double var(--ink);
+  margin-top: clamp(14px, 3vw, 32px);
+  padding-block: 15px;
+  flex-wrap: wrap;
+}
+.logo { font-size: clamp(27px, 5vw, 52px); font-weight: 700; letter-spacing: -.055em; line-height: 1; }
+header nav a, #lang, .project-sections a, .tags, .workflow-download {
+  font-family: system-ui, sans-serif;
+}
+#lang, .cta, .project-sections a, .tags span { border-radius: 0; }
+.hero { border-bottom: 4px double var(--ink); padding-block: clamp(40px, 7vw, 92px); }
+.hero h1 { font-size: clamp(36px, 6.2vw, 84px); }
+.hero h1 em { font-style: italic; }
+.hero-copy p { font-size: clamp(17px, 2vw, 21px); }
+.hero-feature {
+  border: 0;
+  border-left: 1px solid var(--line);
+  border-radius: 0;
+  background: none;
+  padding: 0 0 0 clamp(20px, 3vw, 36px);
+}
+.hero-feature h2 { margin-bottom: 12px; font-size: 28px; }
+.hero-feature a {
+  background: none;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  padding: 13px 0;
+}
+.hero-feature strong { font-size: 18px; }
+.hero-feature span { font-size: 16px; }
+#projects { border-top: 0; }
+.project-sections { margin-top: 16px; }
+.grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  border-top: 3px double var(--ink);
+}
+.card, .card.active {
+  border: 0;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: clamp(15px, 3vw, 30px);
+}
+.card:nth-child(3n) { border-right: 0; }
+.card:hover, .card.active { border-color: var(--line); background: var(--tint); }
+.card.active { box-shadow: inset 0 3px var(--accent); }
+.card h3 { font-size: clamp(21px, 2.6vw, 31px); }
+.card p { font-size: 16px; }
+.tags span { background: transparent; }
+#detail { padding-top: 0; }
+#case {
+  border: 0;
+  border-top: 4px double var(--ink);
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--surface);
+}
+#case .candy-story { max-width: none; }
+#case .candy-story section { break-inside: avoid; margin: 0 0 24px; }
+#case .candy-story h3 { margin-top: 0; }
+#case .candy-story { columns: 2 29ch; column-gap: clamp(24px, 5vw, 56px); column-rule: 1px solid var(--line); }
+#case .candy-story .demo { column-span: all; }
+#case .candy-story ul { break-inside: avoid; }
+.intent-flow, .demo { border-radius: 0; }
+@media (max-width: 760px) {
+  .hero-feature { border-left: 0; padding: 18px 0 0; border-top: 1px solid var(--line); }
+  .grid { grid-template-columns: 1fr; }
+  .card, .card.active { border-right: 0; }
+  #case .candy-story { columns: 1; }
+}
