@@ -104,8 +104,8 @@ const workCases = {
   [
     "Сценарий перехода между навыками",
     "Handoff between assistant skills",
-    "Когда сотрудник спрашивал о статусе заявления на отпуск, распознаватель определял намерение и предлагал открыть другой навык виртуального ассистента — «Мой HR-профиль». В нём сотрудник мог посмотреть, на каком этапе заявление, кто уже согласовал его и чьё решение ещё ожидается. Связаться с согласующим можно было прямо из навыка.",
-    "When an employee asked about a leave request, the recognizer identified the intent and offered to open another virtual assistant skill, My HR Profile. The employee could see the request’s progress, who had approved it and whose decision was still pending, and contact an approver directly from the skill."
+    "Для запросов об отпуске было несколько вариантов продолжения диалога. Один из них мог вызвать другой навык виртуального ассистента — «Мой HR-профиль». В нём сотрудник мог посмотреть, на каком этапе заявление, кто уже согласовал его и чьё решение ещё ожидается. Связаться с согласующим можно было прямо из навыка.",
+    "Leave requests could follow several dialogue paths. One of them could invoke another virtual assistant skill, My HR Profile. The employee could see the request’s progress, who had approved it and whose decision was still pending, and contact an approver directly from the skill."
   ]
 ],
   "leave-preparation-agent": [
@@ -245,13 +245,13 @@ function renderIntentFlow() {
     ['Связаться с согласующим', 'Contact an approver', 'Написать напрямую из навыка', 'Contact them directly from the skill']
   ];
   return `<figure class="intent-flow">
-    <figcaption><h3>${tr('От вопроса об отпуске к HR-профилю', 'From a leave question to the HR profile')}</h3></figcaption>
+    <figcaption><h3>${tr('Ветка об отпуске · один из вариантов', 'Leave dialogue · one possible path')}</h3></figcaption>
     <div class="intent-flow-root">
       <strong>${tr('«Что с моим заявлением на отпуск?»', '“What’s the status of my leave request?”')}</strong>
       <span aria-hidden="true">↓</span>
-      <span>${tr('Интент · узнать статус заявления', 'Intent · check leave request status')}</span>
+      <span>${tr('Распознан интент об отпуске', 'Leave intent recognized')}</span>
       <span aria-hidden="true">↓</span>
-      <strong>${tr('Предложить открыть навык «Мой HR-профиль»', 'Offer to open the My HR Profile skill')}</strong>
+      <strong>${tr('Один из переходов · вызвать навык «Мой HR-профиль»', 'One possible transition · invoke the My HR Profile skill')}</strong>
     </div>
     <ul class="intent-branches">${actions.map(([titleRu, titleEn, textRu, textEn]) => `
       <li>
