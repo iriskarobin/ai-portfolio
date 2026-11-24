@@ -7,7 +7,7 @@ const projects=[
 ["crm-booking","CRM & Booking","CRM и система бронирования","CRM and booking integration","Как согласовать работу с обращениями и заявками в двух системах.","Aligning enquiry and booking workflows across two systems.",["CRM","Workflows","Integration"]],
 ["agent-insurance","Agent Insurance","Страхование для турагентов","Insurance workflow for travel agents","От запроса счёта до подтверждения оплаты и оформления полиса.","From invoice request to payment confirmation and policy issuance.",["B2B","Payments","Workflows"]],
 ["agent-currency-payments","Currency Payments","Валютные платежи в кабинете агента","Foreign-currency payments in the agent portal","Откуда брать валютную сумму и как показывать историю оплат.","Finding the source of original currency amounts and displaying payment history.",["Data Mapping","B2B","Payments"]],
-['ai-business-request-processor','Business Request Processor','Первичная обработка бизнес-запросов','Business request intake','Классификация, уточнение требований и черновик задачи.','Classification, clarification and task drafting.',['LLM','FastAPI','Pydantic']],
+['ai-business-request-processor','Business Request Processor','Первичная обработка бизнес-запросов на базе LLM','LLM-powered business request intake','Классификация, уточнение требований и черновик задачи.','Classification, clarification and task drafting.',['LLM','FastAPI','Pydantic']],
 ['ai-knowledge-assistant','Knowledge Assistant','Ассистент корпоративных знаний','Enterprise knowledge assistant','Поиск ответов по документам с источниками.','Document-grounded answers with citations.',['RAG','Vector DB','Docker']],
 ['ai-ticket-classifier','Ticket Intelligence','Классификатор обращений','Ticket intelligence','Классификация и маршрутизация обращений.','Ticket classification and routing.',['LLM','REST API','JSON']],
 ['ai-document-processing','Document AI','Обработка документов','Intelligent document processing','Извлечение полей и валидация данных.','Field extraction and validation.',['Python','Validation','SQL']],
@@ -82,6 +82,62 @@ function renderCandy() {
 }
 
 const workCases = {
+  "ai-business-request-processor": [
+  [
+    "Задача и результат",
+    "Problem and output",
+    "Сервис принимает письмо, тикет, сообщение из чата или расшифровку звонка. На выходе аналитик получает классификацию, требования и ограничения, пробелы, вопросы к заказчику и черновик задачи. Автоматизация сокращает рутину первичного разбора. Решение о содержании и отправке задачи принимает аналитик.",
+    "The service accepts an email, ticket, chat message or call transcript. The analyst receives a classification, requirements and constraints, gaps, stakeholder questions and a draft ticket. This automates routine triage. The analyst decides what the ticket should contain and whether to send it."
+  ],
+  [
+    "Подготовка входных данных",
+    "Input preparation",
+    "Определить язык, убрать цитаты из почтовой переписки, нормализовать текст и замаскировать персональные данные до передачи в LLM. Поиск похожих обращений по эмбеддингам помечает возможный дубль для проверки.",
+    "Detect the language, remove email quotations, normalize text and mask personal data before sending it to the LLM. Embedding similarity flags possible duplicate requests for review."
+  ],
+  [
+    "Классификация и извлечение",
+    "Classification and extraction",
+    "Выделить отдельные запросы в сообщении и отнести каждый к bug, enhancement, new_feature или consultation. Результат с оценкой ниже 0,7 помечается для ручной классификации. Для каждого извлечённого требования сохранить идентификатор, тип, формулировку, цитату из источника и оценку уверенности. Отдельно фиксировать ограничения, допущения, системы, сроки и заинтересованных лиц.",
+    "Split a message into distinct requests and classify each as bug, enhancement, new_feature or consultation. Scores below 0.7 are flagged for manual classification. Each requirement retains an ID, type, description, source quote and confidence score. Constraints, assumptions, systems, dates and stakeholders are recorded separately."
+  ],
+  [
+    "Gap-анализ и вопросы",
+    "Gap analysis and questions",
+    "Чек-лист зависит от типа запроса. Для новой функции проверяются цель, пользователи, сроки и критерии приёмки. Для ошибки — шаги воспроизведения, окружение, ожидаемое и фактическое поведение. LLM ищет смысловые пробелы, а каждый вопрос связывается с gap_id и сортируется по критичности. Вопросы формулируются на языке заказчика.",
+    "The checklist depends on the request type. A new feature needs a goal, users, timing and acceptance criteria. A bug needs reproduction steps, environment, and expected and actual behaviour. The LLM identifies semantic gaps. Each stakeholder question is linked to a gap ID and ordered by priority."
+  ],
+  [
+    "Черновик, ревью и экспорт",
+    "Draft, review and export",
+    "Черновик включает заголовок, цель, требования, ограничения, критерии приёмки, Definition of Done, открытые вопросы, риски, зависимости и предварительный размер задачи. Аналитик сверяет его с исходным текстом и цитатами, принимает, правит или отклоняет отдельные блоки. После подтверждения черновик экспортируется в таск-менеджер или базу знаний. Правки сохраняются для улучшения промптов и примеров.",
+    "The draft includes a title, goal, requirements, constraints, acceptance criteria, Definition of Done, open questions, risks, dependencies and a rough size estimate. The analyst compares it with the source and its quotes, then approves, edits or rejects individual blocks. Approved drafts can be exported to a task manager or knowledge base. Review edits inform prompt and example improvements."
+  ],
+  [
+    "Техническое решение",
+    "Technical design",
+    "Оркестрация через явные состояния. У этапов LLM свои промпты, версии и JSON-схемы. Невалидный ответ допускает ограниченный повтор, после исчерпания попыток этап передаётся на ручную проверку. Поиск по регламентам, прошлым задачам и глоссарию может обогащать контекст. Артефакты и версии хранятся отдельно от векторного индекса, а метрики по этапам помогают сравнивать промпты и модели.",
+    "An explicit state machine orchestrates the workflow. LLM stages have their own prompts, versions and JSON schemas. Invalid responses receive bounded retries, then go to manual review. Retrieval from policies, past tickets and a glossary can enrich context. Artifacts and versions are stored separately from the vector index, and per-stage metrics support prompt and model comparisons."
+  ],
+  [
+    "Пример · два запроса в одном письме",
+    "Example · two requests in one email",
+    "В вымышленном письме заказчик просит выгружать историю заказов в файл и сообщает, что при открытии заказа была ошибка 500. Экспорт становится отдельным черновиком new_feature с вопросами о формате, полях, периоде, ролях и объёме, а конец месяца фиксируется как запрошенный срок. Ошибка становится черновиком bug с вопросами об идентификаторе заказа, времени, окружении и воспроизводимости. Оба черновика попадают на ревью.",
+    "In a fictional email, a stakeholder asks for order history export and reports an HTTP 500 when opening an order. The export becomes a new_feature draft with questions about format, fields, date range, roles and volume, with month-end captured as the requested deadline. The error becomes a bug draft with questions about order ID, time, environment and reproducibility. Both go to review."
+  ],
+  [
+    "Метрики качества",
+    "Quality metrics",
+    "Точность классификации и полнота извлечения измеряются по разметке аналитика. Полезность вопросов — доля вопросов, признанных полезными на ревью. Доля правок считается по изменённым блокам. Время до готового тикета и число итераций уточнений сравниваются до и после внедрения.",
+    "Classification accuracy and extraction recall are measured against analyst labels. Question usefulness is the share of questions marked useful in review. Editing effort is measured by the share of edited blocks. Time to a ready ticket and clarification rounds can be compared before and after adoption."
+  ],
+  [
+    "Риски и контроль",
+    "Risks and controls",
+    "Модель может додумать требование или неверно разделить письмо. Для проверки служат цитаты, трассировка и ревью аналитиком. Узкоспециализированные запросы требуют актуального доменного контекста. Для чувствительных данных предусмотрены обезличивание и вариант локального развёртывания модели.",
+    "The model may invent requirements or split a message incorrectly. Source quotes, traceability and analyst review make these issues visible. Specialized requests need up-to-date domain context. Sensitive data calls for masking and may warrant local model deployment."
+  ]
+],
 "intent-recognizer": [
   [
     "Задача",
@@ -492,25 +548,55 @@ const projectWorkflows = {
     ]
   },
   "ai-business-request-processor": {
-    "steps": [
-      [
-        "Получить текст запроса",
-        "Receive the request text"
-      ],
-      [
-        "Выделить факты и классифицировать запрос",
-        "Extract facts and classify the request"
-      ],
-      [
-        "Сформировать вопросы и черновик задачи",
-        "Draft a task and clarification questions"
-      ],
-      [
-        "Передать на проверку аналитику",
-        "Send to an analyst for review"
-      ]
+  "steps": [
+    [
+      "Получить письмо, тикет, чат или расшифровку",
+      "Receive an email, ticket, chat or transcript"
+    ],
+    [
+      "Очистить текст, замаскировать персональные данные, проверить дубли",
+      "Clean and mask the text, check duplicates"
+    ],
+    [
+      "Разделить темы и классифицировать запросы",
+      "Split topics and classify requests"
+    ],
+    [
+      "Извлечь требования, ограничения и цитаты",
+      "Extract requirements, constraints and source quotes"
+    ],
+    [
+      "Найти пробелы и подготовить вопросы",
+      "Identify gaps and prepare questions"
+    ],
+    [
+      "Собрать черновики задач",
+      "Assemble draft tickets"
+    ],
+    [
+      "Поставить черновики в очередь аналитика",
+      "Queue drafts for analyst review"
     ]
-  },
+  ],
+  "decision": [
+    "Решение аналитика",
+    "Analyst decision"
+  ],
+  "branches": [
+    [
+      "Принять → Экспортировать задачу",
+      "Approve → Export the ticket"
+    ],
+    [
+      "Отредактировать → Сохранить правки и вернуться к проверке",
+      "Edit → Save changes and return to review"
+    ],
+    [
+      "Отклонить → Зафиксировать причину",
+      "Reject → Record the reason"
+    ]
+  ]
+},
   "ai-knowledge-assistant": {
     "steps": [
       [
@@ -653,8 +739,8 @@ function render(){document.documentElement.lang=lang;document.getElementById('la
   else link.removeAttribute('aria-current');
 });document.getElementById('cards').innerHTML=projectGroups[projectGroup].map((p,i)=>`<button class="card ${i===selected?'active':''}" data-index="${i}"><h3>${tr(p[1],p[7]??p[1])}</h3><p>${tr(p[4],p[5])}</p><div class="tags">${p[6].map(x=>`<span>${x}</span>`).join('')}</div></button>`).join('');document.querySelectorAll('.card').forEach(b=>b.onclick=()=>{selected=Number(b.dataset.index);render();document.getElementById('detail').scrollIntoView({behavior:'smooth'});});const p=projectGroups[projectGroup][selected];const content = p[0] === 'candy-ledger' ? renderCandy()
   : workCases[p[0]] ? renderWorkCase(p, workCases[p[0]])
-  : `<h2>${tr(p[2],p[3])}</h2><p>${tr(p[4],p[5])}</p>${p[0]==='ai-business-request-processor'?`<div class="demo"><p>${tr('Пример первичного разбора запроса','Example of business request intake')}</p><textarea id="request" placeholder="${tr('Агенты не видят оплаченные суммы в валюте. Нужно исправить.','Agents cannot see foreign-currency payments. Please fix.')}"></textarea><button id="analyze">${tr('Разобрать запрос','Analyze request')}</button><pre id="result" aria-live="polite"></pre></div>`:''}`;
-document.getElementById('case').innerHTML=content+renderProjectWorkflow(p[0]);if(p[0]==='ai-business-request-processor')document.getElementById('analyze').onclick=analyze;}
+  : `<h2>${tr(p[2],p[3])}</h2><p>${tr(p[4],p[5])}</p>`;
+document.getElementById('case').innerHTML=content+renderProjectWorkflow(p[0])+(p[0]==='ai-business-request-processor'?`<div class="demo"><p>${tr('Интерактивный пример на правилах','Interactive rule-based example')}</p><textarea id="request" placeholder="${tr('Агенты не видят оплаченные суммы в валюте. Нужно исправить.','Agents cannot see foreign-currency payments. Please fix.')}"></textarea><button id="analyze">${tr('Разобрать запрос','Analyze request')}</button><pre id="result" aria-live="polite"></pre></div>`:'');if(p[0]==='ai-business-request-processor')document.getElementById('analyze').onclick=analyze;}
 function analyze(){const input=document.getElementById('request').value.trim();const currency=/валют|курс|currency|exchange/i.test(input);const bug=/ошиб|сломал|bug|broken/i.test(input);const result={mode:'rule_based_demo',classification:bug?tr('Ошибка','Bug'):tr('Запрос на изменение','Change request'),input,clarification_questions:currency?[tr('В какой валюте хранится сумма?','What currency is the source of truth?'),tr('Нужна ли история частичных оплат?','Should partial payments be shown?'),tr('Как учитывать возвраты?','How should refunds be handled?')]:[tr('Какой ожидается результат?','What is the expected outcome?'),tr('Какие пользователи затронуты?','Which users are affected?'),tr('Каковы критерии приёмки?','What are the acceptance criteria?')],human_review_required:true};document.getElementById('result').textContent=JSON.stringify(result,null,2);}
 document.getElementById('lang').onclick=()=>{lang=lang==='ru'?'en':'ru';localStorage.setItem('portfolio-lang',lang);render();};
 window.addEventListener('hashchange', () => {
