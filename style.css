@@ -356,3 +356,30 @@ header nav a, #lang, .project-sections a, .tags, .workflow-download {
 .hero-feature a > span[data-ru] { grid-column: 1 / -1; }
 .hero-feature .hero-link-arrow { color: var(--accent); font-weight: 700; }
 .hero-feature a:hover strong { text-decoration-thickness: 2px; }
+
+.card-heading {
+  display: flex;
+  width: 100%;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: clamp(21px, 2.4vw, 28px);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -.035em;
+}
+.card-heading > :last-child { flex: none; color: var(--accent); font-size: 17px; }
+.card-description { color: var(--muted); font-size: 16px; }
+.card:hover .card-heading > :first-child,
+.card:focus-visible .card-heading > :first-child { text-decoration: underline; text-underline-offset: .15em; }
+.case-article, .case-materials { max-width: 76ch; margin-inline: auto; }
+#case .case-article .candy-story { columns: auto; }
+#case .case-article .candy-story section { margin: 22px 0 0; }
+#case .case-article h3 { margin-bottom: 8px; }
+#case .case-article p { margin-top: 0; }
+.case-materials { margin-top: 28px; border-top: 1px solid var(--line); }
+.case-materials summary { cursor: pointer; color: var(--accent); font-weight: 700; padding-block: 14px; }
+.case-materials summary:hover { text-decoration: underline; }
+.case-materials .intent-flow { margin-top: 0; }
+.case-materials .workflow-download { margin-bottom: 8px; }
