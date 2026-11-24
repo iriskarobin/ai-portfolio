@@ -1,5 +1,8 @@
 const projects=[
 ['candy-ledger','Gems Ledger','Геймификация профессионального обучения','Professional training gamification','Правила начисления токенов, прогресс аккредитации и магазин наград.','Token award rules, accreditation progress and a rewards shop.',['Gamification','Business rules','Prototype']],
+["crm-booking","CRM & Booking","CRM и система бронирования","CRM and booking integration","Как согласовать работу с обращениями и заявками в двух системах.","Aligning enquiry and booking workflows across two systems.",["CRM","Workflows","Integration"]],
+["agent-insurance","Agent Insurance","Страхование для турагентов","Insurance workflow for travel agents","От запроса счёта до подтверждения оплаты и оформления полиса.","From invoice request to payment confirmation and policy issuance.",["B2B","Payments","Workflows"]],
+["agent-currency-payments","Currency Payments","Валютные платежи в кабинете агента","Foreign-currency payments in the agent portal","Откуда брать валютную сумму и как показывать историю оплат.","Finding the source of original currency amounts and displaying payment history.",["Data Mapping","B2B","Payments"]],
 ['ai-business-request-processor','Business Request Processor','Первичная обработка бизнес-запросов','Business request intake','Классификация, уточнение требований и черновик задачи.','Classification, clarification and task drafting.',['LLM','FastAPI','Pydantic']],
 ['ai-knowledge-assistant','Knowledge Assistant','Ассистент корпоративных знаний','Enterprise knowledge assistant','Поиск ответов по документам с источниками.','Document-grounded answers with citations.',['RAG','Vector DB','Docker']],
 ['ai-ticket-classifier','Ticket Intelligence','Классификатор обращений','Ticket intelligence','Классификация и маршрутизация обращений.','Ticket classification and routing.',['LLM','REST API','JSON']],
@@ -62,18 +65,88 @@ function renderCandy() {
   ).join('');
   const criteria = candyCriteria.map(([ru, en]) => `<li>${tr(ru, en)}</li>`).join('');
   return `<h2>Gems Ledger</h2>
-    <p class="sub">${tr('Авторский прототип геймификации профессионального обучения и аккредитаций. Данные и коэффициенты условные.', 'An original prototype for gamifying professional training and accreditation. Data and coefficients are illustrative.')}</p>
+    <p class="sub">${tr('Проект геймификации профессионального обучения и аккредитаций. Данные и коэффициенты условные.', 'Gamification for professional training and accreditation. Data and coefficients are illustrative.')}</p>
     <div class="candy-story">${sections}
       <h4>${tr('Критерии приёмки', 'Acceptance criteria')}</h4>
       <ul>${criteria}</ul>
       <div class="demo">
-        <h3>${tr('Сценарий в прототипе', 'Prototype scenario')}</h3>
+        <h3>${tr('Сценарий начисления', 'Token award scenario')}</h3>
         <p>${tr('Выбери «Медик», практический курс, Middle, первую попытку и онлайн-формат. Из 40 токенов 28 закроют цель 120, а 12 поступят в магазин. Настройка правил администратором описана выше как требование к продукту.', 'Choose medical professional, practical course, Middle, first attempt and online delivery. Of the 40 tokens, 28 close the gap to 120 and 12 go to the shop. The administrator’s rules editor is a product requirement described above.')}</p>
         <a class="cta" href="candy-ledger.html">${tr('Открыть демо ↗', 'Open demo ↗ (Russian)')}</a>
       </div>
     </div>`;
 }
 
-function render(){document.documentElement.lang=lang;document.getElementById('lang').textContent=lang==='ru'?'EN':'RU';document.querySelectorAll('[data-ru]').forEach(e=>e.innerHTML=e.dataset[lang]);document.getElementById('cards').innerHTML=projects.map((p,i)=>`<button class="card ${i===selected?'active':''}" data-index="${i}"><small>${i===0?tr('ПРОТОТИП','PROTOTYPE'):tr('КОНЦЕПЦИЯ','CONCEPT')}</small><h3>${p[1]}</h3><p>${tr(p[4],p[5])}</p><div class="tags">${p[6].map(x=>`<span>${x}</span>`).join('')}</div></button>`).join('');document.querySelectorAll('.card').forEach(b=>b.onclick=()=>{selected=Number(b.dataset.index);render();document.getElementById('detail').scrollIntoView({behavior:'smooth'});});const p=projects[selected];if(p[0]==='candy-ledger'){document.getElementById('case').innerHTML=renderCandy();return;}document.getElementById('case').innerHTML=`<small class="eyebrow">0${selected+1} / ${tr('В РАЗРАБОТКЕ','IN DEVELOPMENT')}</small><h2>${tr(p[2],p[3])}</h2><p>${tr(p[4],p[5])}</p><div class="casegrid"><div><h3>${tr('Планируемые материалы','Planned deliverables')}</h3><ul><li>${tr('Бизнес-требования и User Stories','Business requirements and user stories')}</li><li>${tr('Архитектура и потоки данных','Architecture and data flows')}</li><li>OpenAPI / REST</li><li>${tr('Тесты и метрики качества','Tests and quality metrics')}</li></ul><p class="note">${tr('Планируемый репозиторий','Planned repository')}: <code>${p[0]}</code></p></div><div class="demo"><strong>${tr('Демонстрация','Demo')}</strong>${p[0]==='ai-business-request-processor'?`<p class="note">${tr('Локальная иллюстрация на правилах. LLM не вызывается.','Local rule-based illustration. No LLM is called.')}</p><textarea id="request" placeholder="${tr('Агенты не видят оплаченные суммы в валюте. Нужно исправить.','Agents cannot see foreign-currency payments. Please fix.')}"></textarea><button id="analyze">${tr('Разобрать запрос','Analyze request')}</button><pre id="result" aria-live="polite"></pre>`:`<p class="note">${tr('Работающее AI-демо будет добавлено после реализации backend.','Live AI demo will be added after backend implementation.')}</p>`}</div></div>`;if(p[0]==='ai-business-request-processor')document.getElementById('analyze').onclick=analyze;}
+const workCases = {
+  "crm-booking": [
+    [
+      "Задача",
+      "Problem",
+      "Менеджеры работают с обращениями в CRM, а статусы заявок ведутся в системе бронирования. Когда данные расходятся или при передаче меняется ответственный, менеджеру приходится вручную восстанавливать контекст.",
+      "Managers handle enquiries in the CRM and track booking statuses in a separate system. Status mismatches and handoffs make them reconstruct the context manually."
+    ],
+    [
+      "Моя работа",
+      "My contribution",
+      "Проработала переходы лидов, обязательные поля при закрытии, причины отказа и правила передачи вопросов по существующим заявкам в сопровождение. Для возвратов и аннуляций описала условия создания задач.",
+      "I defined lead transitions, required closing fields, rejection reasons and handoff rules for enquiries on existing bookings. I also specified when cancellations and refunds should trigger follow-up tasks."
+    ],
+    [
+      "Как оценить эффект",
+      "Measuring impact",
+      "Для сравнения до и после выделила долю расхождений статусов, ручные передачи чатов, смены ответственных и сделки без активности.",
+      "I selected status mismatches, manual chat transfers, ownership changes and inactive deals as before-and-after measures."
+    ]
+  ],
+  "agent-insurance": [
+    [
+      "Задача",
+      "Problem",
+      "Агент запрашивает счёт в личном кабинете, менеджер выставляет его в системе бронирования, а бухгалтерия подтверждает поступление денег. Между оплатой и подтверждением менеджер ещё не знает, можно ли оформлять полис.",
+      "The agent requests an invoice, the manager issues it in the booking system and accounting confirms receipt. Until confirmation, the manager cannot tell whether to issue the policy."
+    ],
+    [
+      "Моя работа",
+      "My contribution",
+      "Описала цепочку между личным кабинетом, бронированием и учётной системой. Выделила события, которые нужно различать: выставление счёта, поступление денег, подтверждение оплаты и выпуск полиса.",
+      "I mapped the workflow across the agent portal, booking and accounting systems, identifying separate events for invoicing, receipt of funds, payment confirmation and policy issuance."
+    ],
+    [
+      "Граничный сценарий",
+      "Edge case",
+      "Агент оплачивает счёт с опозданием, а к моменту сверки курс меняется. Здесь нужно согласовать, когда счёт теряет силу, кто принимает решение о перевыставлении и что видит агент до оформления полиса.",
+      "The agent pays late and the exchange rate changes before reconciliation. The process needs rules for invoice expiry, responsibility for reissuing it and what the agent sees while issuance is pending."
+    ]
+  ],
+  "agent-currency-payments": [
+    [
+      "Задача",
+      "Problem",
+      "Агент видит в личном кабинете рублёвые суммы по оплатам, но не может узнать, сколько уже оплатил в исходной валюте.",
+      "The agent sees payments in rubles in the portal but cannot tell how much was paid in the original currency."
+    ],
+    [
+      "Что нужно определить",
+      "Analysis",
+      "Где доступны исходная сумма и валюта каждого платежа, как платёж связан с заявкой и можно ли восстановить информацию по старым платежам. От этого зависит, какие данные кабинет может показать.",
+      "The analysis identifies where each payment’s original amount and currency are available, how payments link to bookings and whether older records can be recovered. This determines what the portal can display."
+    ],
+    [
+      "Граничный сценарий",
+      "Edge case",
+      "Если заявка оплачена несколькими платежами, каждый нужно рассматривать отдельно. Валютные суммы можно суммировать внутри одной валюты. Для старого платежа без исходной суммы нужно явно указать, какие данные доступны.",
+      "For a booking paid in instalments, each payment is considered separately. Totals can be grouped by currency. When an older payment lacks its original amount, the interface should state which data are available."
+    ]
+  ]
+};
+
+function renderWorkCase(project, sections) {
+  const body = sections.map(([ruTitle, enTitle, ruText, enText]) =>
+    `<section><h3>${tr(ruTitle, enTitle)}</h3><p>${tr(ruText, enText)}</p></section>`
+  ).join('');
+  return `<h2>${tr(project[2], project[3])}</h2><p class="sub">${tr(project[4], project[5])}</p><div class="candy-story">${body}</div>`;
+}
+
+function render(){document.documentElement.lang=lang;document.getElementById('lang').textContent=lang==='ru'?'EN':'RU';document.querySelectorAll('[data-ru]').forEach(e=>e.innerHTML=e.dataset[lang]);document.getElementById('cards').innerHTML=projects.map((p,i)=>`<button class="card ${i===selected?'active':''}" data-index="${i}"><h3>${p[1]}</h3><p>${tr(p[4],p[5])}</p><div class="tags">${p[6].map(x=>`<span>${x}</span>`).join('')}</div></button>`).join('');document.querySelectorAll('.card').forEach(b=>b.onclick=()=>{selected=Number(b.dataset.index);render();document.getElementById('detail').scrollIntoView({behavior:'smooth'});});const p=projects[selected];if(p[0]==='candy-ledger'){document.getElementById('case').innerHTML=renderCandy();return;}if(workCases[p[0]]){document.getElementById('case').innerHTML=renderWorkCase(p,workCases[p[0]]);return;}document.getElementById('case').innerHTML=`<h2>${tr(p[2],p[3])}</h2><p>${tr(p[4],p[5])}</p>${p[0]==='ai-business-request-processor'?`<div class="demo"><p>${tr('Пример первичного разбора запроса','Example of business request intake')}</p><textarea id="request" placeholder="${tr('Агенты не видят оплаченные суммы в валюте. Нужно исправить.','Agents cannot see foreign-currency payments. Please fix.')}"></textarea><button id="analyze">${tr('Разобрать запрос','Analyze request')}</button><pre id="result" aria-live="polite"></pre></div>`:''}`;if(p[0]==='ai-business-request-processor')document.getElementById('analyze').onclick=analyze;}
 function analyze(){const input=document.getElementById('request').value.trim();const currency=/валют|курс|currency|exchange/i.test(input);const bug=/ошиб|сломал|bug|broken/i.test(input);const result={mode:'rule_based_demo',classification:bug?tr('Ошибка','Bug'):tr('Запрос на изменение','Change request'),input,clarification_questions:currency?[tr('В какой валюте хранится сумма?','What currency is the source of truth?'),tr('Нужна ли история частичных оплат?','Should partial payments be shown?'),tr('Как учитывать возвраты?','How should refunds be handled?')]:[tr('Какой ожидается результат?','What is the expected outcome?'),tr('Какие пользователи затронуты?','Which users are affected?'),tr('Каковы критерии приёмки?','What are the acceptance criteria?')],human_review_required:true};document.getElementById('result').textContent=JSON.stringify(result,null,2);}
 document.getElementById('lang').onclick=()=>{lang=lang==='ru'?'en':'ru';localStorage.setItem('portfolio-lang',lang);render();};render();
