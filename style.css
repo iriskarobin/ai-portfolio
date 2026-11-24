@@ -134,3 +134,22 @@ footer { border-top: 1px solid var(--line); padding-block: 25px 35px; color: var
 .candy-story li + li { margin-top: 8px; }
 .candy-story .demo { margin-top: 28px; }
 .candy-story .demo h3 { margin-top: 0; }
+
+.project-sections {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+.project-sections a {
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  padding: 8px 16px;
+  background: var(--surface);
+  color: var(--accent);
+}
+.project-sections a[aria-current] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
