@@ -388,3 +388,39 @@ header nav a, #lang, .project-sections a, .tags, .workflow-download {
 .case-materials summary:hover { text-decoration: underline; }
 .case-materials .intent-flow { margin-top: 0; }
 .case-materials .workflow-download { margin-bottom: 8px; }
+
+.hero-copy .portfolio-stat { color: var(--accent); margin-bottom: 18px; }
+.portfolio-stat strong { font-size: 1.45em; line-height: 1; margin-right: 4px; }
+#cards.grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding-top: 20px; }
+#cards .card {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  gap: clamp(12px, 2vw, 24px);
+  align-items: center;
+  padding: clamp(14px, 2vw, 22px);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 3px 0 var(--line);
+}
+#cards .card:hover, #cards .card.active { border-color: var(--accent); }
+.card-preview {
+  display: grid;
+  align-content: center;
+  min-height: 130px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background-color: var(--tint);
+  background-image: radial-gradient(var(--line) .65px, transparent .65px);
+  background-size: 8px 8px;
+  text-align: center;
+  font: 600 12px/1.35 system-ui, sans-serif;
+}
+.card-preview > span:not(.card-preview-arrow) { padding: 8px; border: 1px solid var(--line); border-radius: 5px; background: var(--surface); overflow-wrap: anywhere; }
+.card-preview-arrow { color: var(--accent); font-size: 17px; }
+.card-copy { display: grid; gap: 8px; }
+.card-copy .card-heading { display: block; margin: 0; }
+.card-link { color: var(--accent); text-decoration: underline; text-underline-offset: .18em; font-size: 14px; font-weight: 700; }
+@media (max-width: 850px) { #cards.grid { grid-template-columns: 1fr; } }
+@media (max-width: 390px) { #cards .card { grid-template-columns: 1fr; } }
