@@ -237,6 +237,29 @@ function renderWorkCase(project, sections) {
   return `<h2>${tr(project[2], project[3])}</h2><p class="sub">${tr(project[4], project[5])}</p><div class="candy-story">${body}</div>`;
 }
 
-function render(){document.documentElement.lang=lang;document.getElementById('lang').textContent=lang==='ru'?'EN':'RU';document.querySelectorAll('[data-ru]').forEach(e=>e.innerHTML=e.dataset[lang]);document.getElementById('cards').innerHTML=projects.map((p,i)=>`<button class="card ${i===selected?'active':''}" data-index="${i}"><h3>${tr(p[1],p[7]??p[1])}</h3><p>${tr(p[4],p[5])}</p><div class="tags">${p[6].map(x=>`<span>${x}</span>`).join('')}</div></button>`).join('');document.querySelectorAll('.card').forEach(b=>b.onclick=()=>{selected=Number(b.dataset.index);render();document.getElementById('detail').scrollIntoView({behavior:'smooth'});});const p=projects[selected];if(p[0]==='candy-ledger'){document.getElementById('case').innerHTML=renderCandy();return;}if(workCases[p[0]]){document.getElementById('case').innerHTML=renderWorkCase(p,workCases[p[0]]);return;}document.getElementById('case').innerHTML=`<h2>${tr(p[2],p[3])}</h2><p>${tr(p[4],p[5])}</p>${p[0]==='ai-business-request-processor'?`<div class="demo"><p>${tr('Пример первичного разбора запроса','Example of business request intake')}</p><textarea id="request" placeholder="${tr('Агенты не видят оплаченные суммы в валюте. Нужно исправить.','Agents cannot see foreign-currency payments. Please fix.')}"></textarea><button id="analyze">${tr('Разобрать запрос','Analyze request')}</button><pre id="result" aria-live="polite"></pre></div>`:''}`;if(p[0]==='ai-business-request-processor')document.getElementById('analyze').onclick=analyze;}
+const analysisProjects = new Set(['candy-ledger', 'crm-booking', 'agent-insurance', 'agent-currency-payments']);
+const projectGroups = {
+  ai: projects.filter(project => !analysisProjects.has(project[0])),
+  analysis: projects.filter(project => analysisProjects.has(project[0]))
+};
+
+function groupFromAddress() {
+  return location.hash === '#analysis-projects' ? 'analysis' : 'ai';
+}
+
+let projectGroup = groupFromAddress();
+function render(){document.documentElement.lang=lang;document.getElementById('lang').textContent=lang==='ru'?'EN':'RU';document.querySelectorAll('[data-ru]').forEach(e=>e.innerHTML=e.dataset[lang]);document.querySelectorAll('[data-project-group]').forEach(link => {
+  if (link.dataset.projectGroup === projectGroup) link.setAttribute('aria-current', 'true');
+  else link.removeAttribute('aria-current');
+});document.getElementById('cards').innerHTML=projectGroups[projectGroup].map((p,i)=>`<button class="card ${i===selected?'active':''}" data-index="${i}"><h3>${tr(p[1],p[7]??p[1])}</h3><p>${tr(p[4],p[5])}</p><div class="tags">${p[6].map(x=>`<span>${x}</span>`).join('')}</div></button>`).join('');document.querySelectorAll('.card').forEach(b=>b.onclick=()=>{selected=Number(b.dataset.index);render();document.getElementById('detail').scrollIntoView({behavior:'smooth'});});const p=projectGroups[projectGroup][selected];if(p[0]==='candy-ledger'){document.getElementById('case').innerHTML=renderCandy();return;}if(workCases[p[0]]){document.getElementById('case').innerHTML=renderWorkCase(p,workCases[p[0]]);return;}document.getElementById('case').innerHTML=`<h2>${tr(p[2],p[3])}</h2><p>${tr(p[4],p[5])}</p>${p[0]==='ai-business-request-processor'?`<div class="demo"><p>${tr('Пример первичного разбора запроса','Example of business request intake')}</p><textarea id="request" placeholder="${tr('Агенты не видят оплаченные суммы в валюте. Нужно исправить.','Agents cannot see foreign-currency payments. Please fix.')}"></textarea><button id="analyze">${tr('Разобрать запрос','Analyze request')}</button><pre id="result" aria-live="polite"></pre></div>`:''}`;if(p[0]==='ai-business-request-processor')document.getElementById('analyze').onclick=analyze;}
 function analyze(){const input=document.getElementById('request').value.trim();const currency=/валют|курс|currency|exchange/i.test(input);const bug=/ошиб|сломал|bug|broken/i.test(input);const result={mode:'rule_based_demo',classification:bug?tr('Ошибка','Bug'):tr('Запрос на изменение','Change request'),input,clarification_questions:currency?[tr('В какой валюте хранится сумма?','What currency is the source of truth?'),tr('Нужна ли история частичных оплат?','Should partial payments be shown?'),tr('Как учитывать возвраты?','How should refunds be handled?')]:[tr('Какой ожидается результат?','What is the expected outcome?'),tr('Какие пользователи затронуты?','Which users are affected?'),tr('Каковы критерии приёмки?','What are the acceptance criteria?')],human_review_required:true};document.getElementById('result').textContent=JSON.stringify(result,null,2);}
-document.getElementById('lang').onclick=()=>{lang=lang==='ru'?'en':'ru';localStorage.setItem('portfolio-lang',lang);render();};render();
+document.getElementById('lang').onclick=()=>{lang=lang==='ru'?'en':'ru';localStorage.setItem('portfolio-lang',lang);render();};
+window.addEventListener('hashchange', () => {
+  if (!['', '#projects', '#ai-projects', '#analysis-projects'].includes(location.hash)) return;
+  const nextGroup = groupFromAddress();
+  if (nextGroup === projectGroup) return;
+  projectGroup = nextGroup;
+  selected = 0;
+  render();
+});
+render();
