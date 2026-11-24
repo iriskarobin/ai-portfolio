@@ -125,3 +125,12 @@ footer { border-top: 1px solid var(--line); padding-block: 25px 35px; color: var
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
+
+.candy-story { max-width: 75ch; }
+#case .candy-story section { padding-block: 0; margin-top: 28px; }
+.candy-story h3, .candy-story h4 { margin-bottom: 8px; }
+.candy-story p { margin-top: 0; }
+.candy-story ul { padding-inline-start: 24px; }
+.candy-story li + li { margin-top: 8px; }
+.candy-story .demo { margin-top: 28px; }
+.candy-story .demo h3 { margin-top: 0; }
