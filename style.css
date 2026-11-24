@@ -344,3 +344,15 @@ header nav a, #lang, .project-sections a, .tags, .workflow-download {
   .card, .card.active { border-right: 0; }
   #case .candy-story { columns: 1; }
 }
+
+.hero-feature a {
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 12px;
+}
+.hero-feature a strong {
+  text-decoration: underline;
+  text-underline-offset: .2em;
+}
+.hero-feature a > span[data-ru] { grid-column: 1 / -1; }
+.hero-feature .hero-link-arrow { color: var(--accent); font-weight: 700; }
+.hero-feature a:hover strong { text-decoration-thickness: 2px; }
