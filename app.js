@@ -82,6 +82,10 @@ function renderCandy() {
 }
 
 const workCases = {
+  "ai-knowledge-assistant": [["Задача","Problem","Сотруднику нужен ответ на рабочий вопрос, а правила и инструкции распределены по документам.","An employee needs an answer, but procedures and guidance are spread across documents."],["Решение","Design","Найти подходящие фрагменты в базе знаний и подготовить ответ со ссылками на источники.","Retrieve relevant passages from the knowledge base and draft an answer with citations."],["Что проверить","Validation","Цитаты подтверждают ответ. При нехватке сведений сервис сообщает, что нужно уточнить.","Citations support the answer. When evidence is insufficient, the service identifies what needs clarification."]],
+  "ai-ticket-classifier": [["Задача","Problem","Входящее обращение нужно направить в очередь, которая может его обработать.","An incoming ticket needs to reach the team that can handle it."],["Решение","Design","Определить тему по тексту, сопоставить её с очередью и передать неоднозначные случаи на ручную классификацию.","Identify the topic from the text, map it to a queue and send ambiguous cases for manual classification."],["Что проверить","Validation","Сравнить маршруты с разметкой команды и посмотреть, какие категории чаще путаются.","Compare routing with team labels and examine which categories are confused most often."]],
+  "ai-document-processing": [["Задача","Problem","Данные из документов нужны в структурированном виде для дальнейшей обработки.","Document data needs to be structured for downstream processing."],["Решение","Design","Извлечь поля, проверить обязательность и форматы, выделить значения, которые требуют проверки.","Extract fields, validate required values and formats, and flag entries for review."],["Что проверить","Validation","Проверить точность по отдельным полям и выявление пропущенных обязательных значений.","Check field-level accuracy and detection of missing required values."]],
+  "llm-evaluation-monitoring": [["Задача","Problem","При смене модели или промпта нужно понимать, как изменились качество, время ответа и стоимость.","Changing a model or prompt requires understanding effects on quality, latency and cost."],["Решение","Design","Запускать сравниваемые версии на одном наборе примеров и фиксировать результаты по каждому запросу.","Run comparable versions on the same set of examples and record per-request results."],["Что проверить","Validation","Смотреть средние метрики и отдельно разбирать примеры, на которых качество ухудшилось.","Review aggregate metrics and inspect individual examples where quality declined."]],
 "intent-recognizer": [
   [
     "Задача",
@@ -265,7 +269,7 @@ function renderWorkCase(project, sections) {
   const body = sections.map(([ruTitle, enTitle, ruText, enText]) =>
     `<section><h3>${tr(ruTitle, enTitle)}</h3><p>${tr(ruText, enText)}</p></section>`
   ).join('');
-  return `<h2>${tr(project[2], project[3])}</h2><p class="sub">${tr(project[4], project[5])}</p><div class="candy-story">${body}</div>${project[0] === 'intent-recognizer' ? renderIntentFlow() : ''}`;
+  return `<h2>${tr(project[2], project[3])}</h2><p class="sub">${tr(project[4], project[5])}</p><div class="candy-story">${body}</div>`;
 }
 
 const analysisProjects = new Set(['candy-ledger', 'crm-booking', 'agent-insurance', 'agent-currency-payments']);
@@ -728,14 +732,48 @@ function renderIntake(project) {
   <p>${tr('Цель — сократить время до готового тикета и число итераций уточнения. Качество оценивается по точности классификации, полноте извлечения, доле полезных вопросов и доле правок. Цитаты помогают проверять требования, RAG добавляет доменный контекст, а чувствительные данные можно обрабатывать локально. Правки аналитика помогают улучшать промпты и примеры.', 'The goal is to reduce time to a ready ticket and clarification rounds. Quality is assessed through classification accuracy, extraction recall, useful-question rate and edit rate. Source quotes support verification, retrieval adds domain context and sensitive data can be handled locally. Analyst edits inform prompt and example improvements.')}</p>`;
 }
 
-function render(){document.documentElement.lang=lang;document.getElementById('lang').textContent=lang==='ru'?'EN':'RU';document.querySelectorAll('[data-ru]').forEach(e=>e.innerHTML=e.dataset[lang]);document.querySelectorAll('[data-project-group]').forEach(link => {
-  if (link.dataset.projectGroup === projectGroup) link.setAttribute('aria-current', 'true');
-  else link.removeAttribute('aria-current');
-});document.getElementById('cards').innerHTML=projectGroups[projectGroup].map((p,i)=>`<button class="card ${i===selected?'active':''}" data-index="${i}"><h3>${tr(p[1],p[7]??p[1])}</h3><p>${tr(p[4],p[5])}</p><div class="tags">${p[6].map(x=>`<span>${x}</span>`).join('')}</div></button>`).join('');document.querySelectorAll('.card').forEach(b=>b.onclick=()=>{selected=Number(b.dataset.index);render();document.getElementById('detail').scrollIntoView({behavior:'smooth'});});const p=projectGroups[projectGroup][selected];const content = p[0] === 'candy-ledger' ? renderCandy()
-  : p[0] === 'ai-business-request-processor' ? renderIntake(p)
-  : workCases[p[0]] ? renderWorkCase(p, workCases[p[0]])
-  : `<h2>${tr(p[2],p[3])}</h2><p>${tr(p[4],p[5])}</p>`;
-document.getElementById('case').innerHTML = content + renderProjectWorkflow(p[0]);
+
+function render() {
+  document.documentElement.lang = lang;
+  document.getElementById('lang').textContent = lang === 'ru' ? 'EN' : 'RU';
+  document.querySelectorAll('[data-ru]').forEach(element => {
+    element.innerHTML = element.dataset[lang];
+  });
+  document.querySelectorAll('[data-project-group]').forEach(link => {
+    if (link.dataset.projectGroup === projectGroup) link.setAttribute('aria-current', 'true');
+    else link.removeAttribute('aria-current');
+  });
+
+  const currentProjects = projectGroups[projectGroup];
+  document.getElementById('cards').innerHTML = currentProjects.map((project, index) =>
+    `<button type="button" class="card ${index === selected ? 'active' : ''}" data-index="${index}"
+        aria-controls="case" aria-pressed="${index === selected}">
+      <span class="card-heading"><span>${tr(project[1], project[7] ?? project[1])}</span><span aria-hidden="true">↓</span></span>
+      <span class="card-description">${tr(project[4], project[5])}</span>
+    </button>`
+  ).join('');
+  document.querySelectorAll('.card').forEach(button => {
+    button.onclick = () => {
+      selected = Number(button.dataset.index);
+      render();
+      const heading = document.querySelector('#case h2');
+      heading.setAttribute('tabindex', '-1');
+      heading.focus({ preventScroll: true });
+      document.getElementById('detail').scrollIntoView();
+    };
+  });
+
+  const project = currentProjects[selected];
+  const [id] = project;
+  const article = id === 'candy-ledger' ? renderCandy()
+    : id === 'ai-business-request-processor' ? renderIntake(project)
+    : renderWorkCase(project, workCases[id]);
+  const diagram = (id === 'intent-recognizer' ? renderIntentFlow() : '') + renderProjectWorkflow(id);
+  document.getElementById('case').innerHTML = `<div class="case-article">${article}</div>
+    <details class="case-materials">
+      <summary>${tr('Схема процесса и YAML', 'Process diagram and YAML')}</summary>
+      ${diagram}
+    </details>`;
 }
 document.getElementById('lang').onclick=()=>{lang=lang==='ru'?'en':'ru';localStorage.setItem('portfolio-lang',lang);render();};
 window.addEventListener('hashchange', () => {
