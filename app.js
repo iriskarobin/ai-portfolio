@@ -733,6 +733,24 @@ function renderIntake(project) {
 }
 
 
+function renderProjectCard(project, index) {
+  const [id] = project;
+  const { steps, branches } = projectWorkflows[id];
+  const lastStep = branches ? branches[0].map(text => text.split(' → ').at(-1)) : steps.at(-1);
+  const preview = [steps[0], lastStep].map(([ru, en]) => escapeHTML(tr(ru, en)));
+  return `<button type="button" class="card ${index === selected ? 'active' : ''}" data-index="${index}"
+      aria-controls="case" aria-pressed="${index === selected}">
+    <span class="card-preview" aria-hidden="true">
+      <span>${preview[0]}</span><span class="card-preview-arrow">↓</span><span>${preview[1]}</span>
+    </span>
+    <span class="card-copy">
+      <span class="card-heading">${tr(project[1], project[7] ?? project[1])}</span>
+      <span class="card-description">${tr(project[4], project[5])}</span>
+      <span class="card-link">${tr('Смотреть кейс', 'View case study')} <span aria-hidden="true">↘</span></span>
+    </span>
+  </button>`;
+}
+
 function render() {
   document.documentElement.lang = lang;
   document.getElementById('lang').textContent = lang === 'ru' ? 'EN' : 'RU';
@@ -745,13 +763,7 @@ function render() {
   });
 
   const currentProjects = projectGroups[projectGroup];
-  document.getElementById('cards').innerHTML = currentProjects.map((project, index) =>
-    `<button type="button" class="card ${index === selected ? 'active' : ''}" data-index="${index}"
-        aria-controls="case" aria-pressed="${index === selected}">
-      <span class="card-heading"><span>${tr(project[1], project[7] ?? project[1])}</span><span aria-hidden="true">↓</span></span>
-      <span class="card-description">${tr(project[4], project[5])}</span>
-    </button>`
-  ).join('');
+  document.getElementById('cards').innerHTML = currentProjects.map(renderProjectCard).join('');
   document.querySelectorAll('.card').forEach(button => {
     button.onclick = () => {
       selected = Number(button.dataset.index);
