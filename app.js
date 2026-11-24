@@ -1,5 +1,5 @@
 const projects=[
-['candy-ledger','Candy Ledger','Геймификация профессионального обучения','Professional training gamification','Правила начисления токенов, прогресс аккредитации и магазин наград.','Token award rules, accreditation progress and a rewards shop.',['Gamification','Business rules','Prototype']],
+['candy-ledger','Gems Ledger','Геймификация профессионального обучения','Professional training gamification','Правила начисления токенов, прогресс аккредитации и магазин наград.','Token award rules, accreditation progress and a rewards shop.',['Gamification','Business rules','Prototype']],
 ['ai-business-request-processor','Business Request Processor','Первичная обработка бизнес-запросов','Business request intake','Классификация, уточнение требований и черновик задачи.','Classification, clarification and task drafting.',['LLM','FastAPI','Pydantic']],
 ['ai-knowledge-assistant','Knowledge Assistant','Ассистент корпоративных знаний','Enterprise knowledge assistant','Поиск ответов по документам с источниками.','Document-grounded answers with citations.',['RAG','Vector DB','Docker']],
 ['ai-ticket-classifier','Ticket Intelligence','Классификатор обращений','Ticket intelligence','Классификация и маршрутизация обращений.','Ticket classification and routing.',['LLM','REST API','JSON']],
@@ -61,7 +61,7 @@ function renderCandy() {
     `<section><h3>${tr(titleRu, titleEn)}</h3><p>${tr(textRu, textEn)}</p></section>`
   ).join('');
   const criteria = candyCriteria.map(([ru, en]) => `<li>${tr(ru, en)}</li>`).join('');
-  return `<h2>Candy Ledger</h2>
+  return `<h2>Gems Ledger</h2>
     <p class="sub">${tr('Авторский прототип геймификации профессионального обучения и аккредитаций. Данные и коэффициенты условные.', 'An original prototype for gamifying professional training and accreditation. Data and coefficients are illustrative.')}</p>
     <div class="candy-story">${sections}
       <h4>${tr('Критерии приёмки', 'Acceptance criteria')}</h4>
