@@ -280,7 +280,12 @@ header nav a, #lang, .project-sections a, .tags, .workflow-download {
 }
 #lang, .cta, .project-sections a, .tags span { border-radius: 0; }
 .hero { border-bottom: 4px double var(--ink); padding-block: clamp(40px, 7vw, 92px); }
-.hero h1 { font-size: clamp(28px, 4.1vw, 49px); }
+.hero-copy { container-type: inline-size; }
+.hero h1 {
+  font-size: clamp(16px, 4.8vw, 36px);
+  font-size: min(6.7cqi, 36px);
+  white-space: nowrap;
+}
 .hero h1 em { font-style: italic; }
 .hero-copy p { font-size: clamp(17px, 2vw, 21px); }
 .hero-feature {
