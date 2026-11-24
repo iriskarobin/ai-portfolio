@@ -1,4 +1,5 @@
 const projects=[
+["meeting-action-agent","Агент постановки задач","AI-агент постановки задач по встречам и письмам","AI agent for meeting and email action items","Поручение из письма или транскрипции становится задачей с исполнителем, постановщиком и контекстом.","Turn an instruction from email or a meeting transcript into a task with an assignee, a requester and context.",["AI Agent","Email","Meetings","Task Management"],"Action Item Agent"],
 ['candy-ledger','Gems Ledger','Геймификация профессионального обучения','Professional training gamification','Правила начисления токенов, прогресс аккредитации и магазин наград.','Token award rules, accreditation progress and a rewards shop.',['Gamification','Business rules','Prototype']],
 ["crm-booking","CRM & Booking","CRM и система бронирования","CRM and booking integration","Как согласовать работу с обращениями и заявками в двух системах.","Aligning enquiry and booking workflows across two systems.",["CRM","Workflows","Integration"]],
 ["agent-insurance","Agent Insurance","Страхование для турагентов","Insurance workflow for travel agents","От запроса счёта до подтверждения оплаты и оформления полиса.","From invoice request to payment confirmation and policy issuance.",["B2B","Payments","Workflows"]],
@@ -78,6 +79,32 @@ function renderCandy() {
 }
 
 const workCases = {
+  "meeting-action-agent": [
+  [
+    "Задача",
+    "Problem",
+    "Поручения звучат на встречах и встречаются в переписке. После обсуждения их приходится переносить во внутренний таск-менеджер, восстанавливая, кто дал поручение, кому и о чём шла речь.",
+    "Action items come up in meetings and email. Manually transferring them to an internal task manager means reconstructing who made the request, who should act on it and what it refers to."
+  ],
+  [
+    "Мой вклад",
+    "My contribution",
+    "Я спроектировала AI-агента, который анализирует письма и транскрипции встреч, выделяет поручения, определяет исполнителя и постановщика и передаёт задачу во внутренний таск-менеджер. Постановщиком становится человек, который дал поручение. В описание задачи попадает контекст из обсуждения.",
+    "I designed an AI agent that analyses emails and meeting transcripts, extracts action items, identifies assignees and requesters, and creates tasks in an internal task manager. The person who gave the instruction is recorded as the requester, and relevant discussion context is added to the description."
+  ],
+  [
+    "Пример сценария",
+    "Example scenario",
+    "На встрече руководитель говорит: «Ваня, ты просмотри адреса в списке, который мы только что обсуждали». В таск-менеджере у Вани появляется задача «Проверить адреса в списке». Руководитель указан постановщиком, а в описании отражено, о каком списке шла речь по контексту встречи.",
+    "In a meeting, a manager says, “Ivan, please review the addresses in the list we just discussed.” Ivan receives a task titled “Review addresses in the list.” The manager is recorded as the requester, and the description identifies the list from the surrounding discussion."
+  ],
+  [
+    "Как проверить результат",
+    "Acceptance example",
+    "Для примера проверяем, что задача попала Ване, постановщиком указан говоривший, а описание помогает понять, какой список нужно проверить. Отдельный сценарий для проверки — на встрече упомянули человека и тему, но поручения ему не дали.",
+    "Check that Ivan received the task, the speaker is recorded as the requester and the description identifies the list to review. A separate test scenario covers a conversation that mentions a person and a topic without assigning that person a task."
+  ]
+],
   "crm-booking": [
     [
       "Задача",
@@ -147,6 +174,6 @@ function renderWorkCase(project, sections) {
   return `<h2>${tr(project[2], project[3])}</h2><p class="sub">${tr(project[4], project[5])}</p><div class="candy-story">${body}</div>`;
 }
 
-function render(){document.documentElement.lang=lang;document.getElementById('lang').textContent=lang==='ru'?'EN':'RU';document.querySelectorAll('[data-ru]').forEach(e=>e.innerHTML=e.dataset[lang]);document.getElementById('cards').innerHTML=projects.map((p,i)=>`<button class="card ${i===selected?'active':''}" data-index="${i}"><h3>${p[1]}</h3><p>${tr(p[4],p[5])}</p><div class="tags">${p[6].map(x=>`<span>${x}</span>`).join('')}</div></button>`).join('');document.querySelectorAll('.card').forEach(b=>b.onclick=()=>{selected=Number(b.dataset.index);render();document.getElementById('detail').scrollIntoView({behavior:'smooth'});});const p=projects[selected];if(p[0]==='candy-ledger'){document.getElementById('case').innerHTML=renderCandy();return;}if(workCases[p[0]]){document.getElementById('case').innerHTML=renderWorkCase(p,workCases[p[0]]);return;}document.getElementById('case').innerHTML=`<h2>${tr(p[2],p[3])}</h2><p>${tr(p[4],p[5])}</p>${p[0]==='ai-business-request-processor'?`<div class="demo"><p>${tr('Пример первичного разбора запроса','Example of business request intake')}</p><textarea id="request" placeholder="${tr('Агенты не видят оплаченные суммы в валюте. Нужно исправить.','Agents cannot see foreign-currency payments. Please fix.')}"></textarea><button id="analyze">${tr('Разобрать запрос','Analyze request')}</button><pre id="result" aria-live="polite"></pre></div>`:''}`;if(p[0]==='ai-business-request-processor')document.getElementById('analyze').onclick=analyze;}
+function render(){document.documentElement.lang=lang;document.getElementById('lang').textContent=lang==='ru'?'EN':'RU';document.querySelectorAll('[data-ru]').forEach(e=>e.innerHTML=e.dataset[lang]);document.getElementById('cards').innerHTML=projects.map((p,i)=>`<button class="card ${i===selected?'active':''}" data-index="${i}"><h3>${tr(p[1],p[7]??p[1])}</h3><p>${tr(p[4],p[5])}</p><div class="tags">${p[6].map(x=>`<span>${x}</span>`).join('')}</div></button>`).join('');document.querySelectorAll('.card').forEach(b=>b.onclick=()=>{selected=Number(b.dataset.index);render();document.getElementById('detail').scrollIntoView({behavior:'smooth'});});const p=projects[selected];if(p[0]==='candy-ledger'){document.getElementById('case').innerHTML=renderCandy();return;}if(workCases[p[0]]){document.getElementById('case').innerHTML=renderWorkCase(p,workCases[p[0]]);return;}document.getElementById('case').innerHTML=`<h2>${tr(p[2],p[3])}</h2><p>${tr(p[4],p[5])}</p>${p[0]==='ai-business-request-processor'?`<div class="demo"><p>${tr('Пример первичного разбора запроса','Example of business request intake')}</p><textarea id="request" placeholder="${tr('Агенты не видят оплаченные суммы в валюте. Нужно исправить.','Agents cannot see foreign-currency payments. Please fix.')}"></textarea><button id="analyze">${tr('Разобрать запрос','Analyze request')}</button><pre id="result" aria-live="polite"></pre></div>`:''}`;if(p[0]==='ai-business-request-processor')document.getElementById('analyze').onclick=analyze;}
 function analyze(){const input=document.getElementById('request').value.trim();const currency=/валют|курс|currency|exchange/i.test(input);const bug=/ошиб|сломал|bug|broken/i.test(input);const result={mode:'rule_based_demo',classification:bug?tr('Ошибка','Bug'):tr('Запрос на изменение','Change request'),input,clarification_questions:currency?[tr('В какой валюте хранится сумма?','What currency is the source of truth?'),tr('Нужна ли история частичных оплат?','Should partial payments be shown?'),tr('Как учитывать возвраты?','How should refunds be handled?')]:[tr('Какой ожидается результат?','What is the expected outcome?'),tr('Какие пользователи затронуты?','Which users are affected?'),tr('Каковы критерии приёмки?','What are the acceptance criteria?')],human_review_required:true};document.getElementById('result').textContent=JSON.stringify(result,null,2);}
 document.getElementById('lang').onclick=()=>{lang=lang==='ru'?'en':'ru';localStorage.setItem('portfolio-lang',lang);render();};render();
