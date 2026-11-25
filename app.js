@@ -273,8 +273,9 @@ function renderWorkCase(project, sections) {
 }
 
 const analysisProjects = new Set(['candy-ledger', 'crm-booking', 'agent-insurance', 'agent-currency-payments']);
+const featured = ["ai-business-request-processor","meeting-action-agent","intent-recognizer","leave-preparation-agent","community-news-agent"];
 const projectGroups = {
-  ai: projects.filter(project => !analysisProjects.has(project[0])),
+  ai: projects.filter(project => !analysisProjects.has(project[0])).sort((a,b) => (featured.includes(a[0]) ? featured.indexOf(a[0]) : 99) - (featured.includes(b[0]) ? featured.indexOf(b[0]) : 99)),
   analysis: projects.filter(project => analysisProjects.has(project[0]))
 };
 
@@ -744,7 +745,7 @@ function renderProjectCard(project, index) {
       <span>${preview[0]}</span><span class="card-preview-arrow">↓</span><span>${preview[1]}</span>
     </span>
     <span class="card-copy">
-      <span class="card-heading">${tr(project[1], project[7] ?? project[1])}</span>
+      <span class="case-type">${tr(featured.includes(id) ? (id === "ai-business-request-processor" ? "Демонстрационный сервис" : "Избранный кейс") : (analysisProjects.has(id) ? "Системный анализ" : "Проектная проработка"), featured.includes(id) ? (id === "ai-business-request-processor" ? "Demo service" : "Featured case") : (analysisProjects.has(id) ? "Systems analysis" : "Design study"))}</span><span class="card-heading">${tr(project[1], project[7] ?? project[1])}</span>
       <span class="card-description">${tr(project[4], project[5])}</span>
       <span class="card-link">${tr('Смотреть кейс', 'View case study')} <span aria-hidden="true">↘</span></span>
     </span>
@@ -785,7 +786,7 @@ function render() {
     <details class="case-materials">
       <summary>${tr('Схема процесса и YAML', 'Process diagram and YAML')}</summary>
       ${diagram}
-    </details>`;
+    </details>${featured.includes(id) ? `<p class="case-materials"><a class="workflow-download" href="https://github.com/iriskarobin/ai-portfolio/tree/portfolio-novaroll/cases">${tr("Технические артефакты и сценарии проверки","Technical artifacts and validation scenarios")}</a>${id === "ai-business-request-processor" ? ` · <a class="workflow-download" href="https://github.com/iriskarobin/ai-portfolio/tree/portfolio-novaroll/service">${tr("Исходный код API","API source code")}</a>` : ""}</p>` : ""}`;
 }
 document.getElementById('lang').onclick=()=>{lang=lang==='ru'?'en':'ru';localStorage.setItem('portfolio-lang',lang);render();};
 window.addEventListener('hashchange', () => {
